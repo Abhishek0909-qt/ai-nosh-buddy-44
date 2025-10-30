@@ -1,1 +1,4 @@
 project_id = "mrnjjetahviifxudcjmk"
+
+[functions.generate-diet]
+verify_jwt = false
