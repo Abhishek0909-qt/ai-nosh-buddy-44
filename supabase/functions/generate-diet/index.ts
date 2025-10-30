@@ -8,6 +8,7 @@ const corsHeaders = {
 interface DietRequest {
   age: number;
   weight: number;
+  height: number;
   gender: string;
   dietType: string;
   goal: string;
@@ -19,7 +20,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { age, weight, gender, dietType, goal }: DietRequest = await req.json();
+    const { age, weight, height, gender, dietType, goal }: DietRequest = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -29,9 +30,9 @@ Deno.serve(async (req) => {
     // Calculate BMR using Harris-Benedict Formula
     let bmr: number;
     if (gender === "male") {
-      bmr = 88.36 + (13.4 * weight) + (4.8 * 170) - (5.7 * age); // Assuming average height of 170cm
+      bmr = 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age);
     } else {
-      bmr = 447.6 + (9.2 * weight) + (3.1 * 165) - (4.3 * age); // Assuming average height of 165cm
+      bmr = 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age);
     }
 
     // Adjust calories based on goal
@@ -47,12 +48,15 @@ Deno.serve(async (req) => {
     const dietTypeText = dietType === "veg" ? "vegetarian" : "non-vegetarian";
     const goalText = goal.replace("-", " ");
 
-    const prompt = `Generate a detailed daily meal plan for ${goalText} with the following specifications:
+    const randomSeed = Math.random();
+    const prompt = `Generate a unique and varied daily meal plan for ${goalText} with the following specifications:
 - Total daily calories: ${targetCalories}
 - Diet type: ${dietTypeText}
-- User: ${age} years old, ${weight}kg, ${gender}
+- User: ${age} years old, ${weight}kg, ${height}cm, ${gender}
+- Random seed: ${randomSeed} (use this to ensure variety)
 
-Provide EXACTLY 3 meals (Breakfast, Lunch, Dinner) with realistic portions.
+IMPORTANT: Create DIFFERENT meal combinations each time. Avoid repeating the same meals.
+Provide EXACTLY 3 meals (Breakfast, Lunch, Dinner) with realistic portions and varied options.
 Return ONLY a valid JSON object with this exact structure (no markdown, no explanation):
 {
   "goal": "${goalText}",

@@ -14,6 +14,7 @@ interface DietFormProps {
 export interface FormData {
   age: number;
   weight: number;
+  height: number;
   gender: string;
   dietType: string;
   goal: string;
@@ -23,6 +24,7 @@ export const DietForm = ({ onSubmit, isLoading }: DietFormProps) => {
   const [formData, setFormData] = useState<FormData>({
     age: 25,
     weight: 70,
+    height: 170,
     gender: "",
     dietType: "",
     goal: "",
@@ -75,6 +77,22 @@ export const DietForm = ({ onSubmit, isLoading }: DietFormProps) => {
               step="0.1"
               value={formData.weight}
               onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || 0 })}
+              className="bg-background border-border"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="height" className="text-sm font-medium text-foreground">
+              Height (cm)
+            </Label>
+            <Input
+              id="height"
+              type="number"
+              min="100"
+              max="250"
+              value={formData.height}
+              onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
               className="bg-background border-border"
               required
             />
